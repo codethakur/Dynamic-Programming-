@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <string_view>
 
-
 int static t[1001][1001];
 
 namespace DynamicProgramming
@@ -101,6 +100,47 @@ namespace DynamicProgramming
 
             return t[n][m];
         }
+        int LongestCommSubstringRecursive(std::string_view s1, std::string_view s2, int n, int m, int count)
+        {
+            if (n == 0 || m == 0)
+                return count;
+
+            if (s1[n - 1] == s2[m - 1])
+            {
+                count = LongestCommSubstringRecursive(s1, s2, n - 1, m - 1, count + 1);
+            }
+
+            int c1 = LongestCommSubstringRecursive(s1, s2, n - 1, m, 0);
+            int c2 = LongestCommSubstringRecursive(s1, s2, n, m - 1, 0);
+
+            return std::max({count, c1, c2});
+        }
+
+
+        int LongestCommSubstringMemo(std::string_view s1, std::string_view s2, int n, int m, int &maxLen)
+        {
+            if (n == 0 || m == 0)
+                return 0;
+
+            if (t[n][m] != -1)
+                return t[n][m];
+
+            LongestCommSubstringMemo(s1, s2, n - 1, m, maxLen);
+            LongestCommSubstringMemo(s1, s2, n, m - 1, maxLen);
+
+            if (s1[n - 1] == s2[m - 1])
+            {
+                t[n][m] = 1 + LongestCommSubstringMemo(s1, s2, n - 1, m - 1, maxLen);
+                maxLen = std::max(maxLen, t[n][m]);
+                return t[n][m];
+            }
+            else
+            {
+                t[n][m] = 0;
+                return 0;
+            }
+        }
+
 
         int LongestCommSubstring(std::string s1, std::string s2, int n, int m)
         {
@@ -180,6 +220,10 @@ namespace DynamicProgramming
             }
             std::reverse(result.begin(), result.end());
             return result;
+        }
+        int shortestCommSuperSequence(std::string s1, std::string s2, int n, int m)
+        {
+            return m+n - Topdown(s1,s2, n,m);
         }
     }
 
