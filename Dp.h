@@ -1,7 +1,9 @@
+#include "LCS/LCS.h"
 #include <string>
 #include <limits>
 #include <algorithm>
 #include <string_view>
+
 
 int static t[1001][1001];
 
