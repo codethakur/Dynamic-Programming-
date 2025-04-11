@@ -35,6 +35,11 @@ int main()
             << DynamicProgramming::LCS::shortestCommSuperSequence(s1,s2,n, m)
             <<std::endl;
 
+    auto [insertion, deletion] = DynamicProgramming::LCS::stringAtoB(s1, s2, s1.length(), s2.length());
+    std::cout << "Minimum Number of Insertion = " << insertion<<"\n"
+              << " and Deletion = " << deletion
+              << " to convert String a to String b." << std::endl;
+
     system("pause>0");
     return 0;
 }
