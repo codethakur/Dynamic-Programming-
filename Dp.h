@@ -225,6 +225,17 @@ namespace DynamicProgramming
         {
             return m+n - Topdown(s1,s2, n,m);
         }
+
+        //Minimum Number of Insertion and Deletion to convert String a to String b
+        #include <tuple>
+        std::tuple<int, int> stringAtoB(const std::string& s1, const std::string& s2, int n, int m)
+        {
+            int lcs = Topdown(s1, s2, n, m);
+            int Deletion = n - lcs;
+            int Insertion = m - lcs;
+        
+            return {Insertion, Deletion};
+        }
     }
 
 }
