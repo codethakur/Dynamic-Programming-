@@ -1,12 +1,12 @@
 #include <iostream>
 #include <string>
-#include <cstring>
 #include "LCS/LCS.h"
+#include <cstring>
 
 int main()
 {
-    std::string s1 = "acbcf";
-    std::string s2 = "abcdaf";
+    std::string s1 = "AGGTAB";
+    std::string s2 = "GXTXAYB";
     int n = s1.length();
     int m = s2.length();
 
@@ -30,6 +30,11 @@ int main()
     std::cout << "Printing Longest common subsequence: "
               << DynamicProgramming::LCS::printLongestCommSubsequence(s1, s2, n, m)
               << std::endl;
+
+    std::cout<<"Shortes Super Sequence: "
+            << DynamicProgramming::LCS::shortestCommSuperSequence(s1,s2,n, m)
+            <<std::endl;
+
     system("pause>0");
     return 0;
 }
