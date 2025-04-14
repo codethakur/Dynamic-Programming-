@@ -116,7 +116,6 @@ namespace DynamicProgramming
             return std::max({count, c1, c2});
         }
 
-
         int LongestCommSubstringMemo(std::string_view s1, std::string_view s2, int n, int m, int &maxLen)
         {
             if (n == 0 || m == 0)
@@ -140,7 +139,6 @@ namespace DynamicProgramming
                 return 0;
             }
         }
-
 
         int LongestCommSubstring(std::string s1, std::string s2, int n, int m)
         {
@@ -221,20 +219,140 @@ namespace DynamicProgramming
             std::reverse(result.begin(), result.end());
             return result;
         }
+
         int shortestCommSuperSequence(std::string s1, std::string s2, int n, int m)
         {
-            return m+n - Topdown(s1,s2, n,m);
+            return m + n - Topdown(s1, s2, n, m);
         }
 
-        //Minimum Number of Insertion and Deletion to convert String a to String b
+        // Minimum Number of Insertion and Deletion to convert String a to String b
         #include <tuple>
-        std::tuple<int, int> stringAtoB(const std::string& s1, const std::string& s2, int n, int m)
+        std::tuple<int, int> stringAtoB(const std::string &s1, const std::string &s2, int n, int m)
         {
             int lcs = Topdown(s1, s2, n, m);
             int Deletion = n - lcs;
             int Insertion = m - lcs;
-        
+
             return {Insertion, Deletion};
+        }
+
+        int longestPalindromeSubseq(std::string_view s)
+        {
+            int n = s.length();
+            std::string rev(s.rbegin(), s.rend());
+            return Topdown(s, std::string_view(rev), n, n);
+        }
+
+        // Minimum no of Deletion to Make a String Palindrome
+
+        int minDeletions(std::string_view s)
+        {
+            int n = s.length();
+            int LPSlenth = longestPalindromeSubseq(s);
+
+            return (n - LPSlenth);
+        }
+
+        std::string printShortestCommSubsequence(std::string s1, std::string s2, int n, int m)
+        {
+            // Build LCS table
+            for (int i = 0; i <= n; i++)
+            {
+                for (int j = 0; j <= m; j++)
+                {
+                    if (i == 0 || j == 0)
+                        t[i][j] = 0;
+                }
+            }
+
+            for (int i = 1; i <= n; i++)
+            {
+                for (int j = 1; j <= m; j++)
+                {
+                    if (s1[i - 1] == s2[j - 1])
+                        t[i][j] = 1 + t[i - 1][j - 1];
+                    else
+                        t[i][j] = std::max(t[i - 1][j], t[i][j - 1]);
+                }
+            }
+
+            // Backtracking
+            int i = n, j = m;
+            std::string result = "";
+
+            while (i > 0 && j > 0)
+            {
+                if (s1[i - 1] == s2[j - 1])
+                {
+                    result.push_back(s1[i - 1]);
+                    i--;
+                    j--;
+                }
+                else if (t[i][j - 1] > t[i - 1][j])
+                {
+                    result.push_back(s2[j - 1]);
+                    j--;
+                }
+                else
+                {
+                    result.push_back(s1[i - 1]);
+                    i--;
+                }
+            }
+
+            // Add remaining characters
+            while (i > 0)
+            {
+                result.push_back(s1[i - 1]);
+                i--;
+            }
+            while (j > 0)
+            {
+                result.push_back(s2[j - 1]);
+                j--;
+            }
+
+            std::reverse(result.begin(), result.end());
+            return result;
+        }
+
+        int LongestReaptingSubsequence(const std::string str)
+        {
+            std::string c_str = str;
+            int n = str.length();
+            int m = c_str.length();
+            for (int i = 0; i <= n; i++)
+            {
+                for (int j = 0; j <= m; j++)
+                {
+                    if (i == 0 || j == 0)
+                    {
+                        t[i][j] = 0;
+                    }
+                }
+            }
+
+            for (int i = 1; i <= n; i++)
+            {
+                for (int j = 1; j <= m; j++)
+                {
+                    if (str[i - 1] == c_str[j - 1] && i!=j)
+                        t[i][j] = 1 + t[i - 1][j - 1];
+                    else
+                        t[i][j] = std::max(t[i - 1][j], t[i][j - 1]);
+                }
+            }
+
+            return t[n][m];
+        }
+        bool SequencePatternMatching(const std::string_view s1, const std::string_view s2 ){
+            int  n = s1.length();
+            int m = s2.length();
+            
+            int LCS_length = Topdown(s1, s2,n,m);
+            if(LCS_length == s1.length())
+                return true;
+            return false;    
         }
     }
 
