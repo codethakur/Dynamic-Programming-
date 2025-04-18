@@ -225,8 +225,8 @@ namespace DynamicProgramming
             return m + n - Topdown(s1, s2, n, m);
         }
 
-        // Minimum Number of Insertion and Deletion to convert String a to String b
-        #include <tuple>
+// Minimum Number of Insertion and Deletion to convert String a to String b
+#include <tuple>
         std::tuple<int, int> stringAtoB(const std::string &s1, const std::string &s2, int n, int m)
         {
             int lcs = Topdown(s1, s2, n, m);
@@ -336,7 +336,7 @@ namespace DynamicProgramming
             {
                 for (int j = 1; j <= m; j++)
                 {
-                    if (str[i - 1] == c_str[j - 1] && i!=j)
+                    if (str[i - 1] == c_str[j - 1] && i != j)
                         t[i][j] = 1 + t[i - 1][j - 1];
                     else
                         t[i][j] = std::max(t[i - 1][j], t[i][j - 1]);
@@ -345,35 +345,186 @@ namespace DynamicProgramming
 
             return t[n][m];
         }
-        bool SequencePatternMatching(const std::string_view s1, const std::string_view s2 ){
-            int  n = s1.length();
+        bool SequencePatternMatching(const std::string_view s1, const std::string_view s2)
+        {
+            int n = s1.length();
             int m = s2.length();
-            
-            int LCS_length = Topdown(s1, s2,n,m);
-            if(LCS_length == s1.length())
+
+            int LCS_length = Topdown(s1, s2, n, m);
+            if (LCS_length == s1.length())
                 return true;
-            return false;    
+            return false;
         }
+
     }
-    namespace MatrixChainMultiplication 
+    namespace MatrixChainMultiplication
     {
         int Recursive(int arr[], int i, int j)
         {
-            if(i>=j){
+            if (i >= j)
+            {
                 return 0;
             }
             int mn = INT_MAX;
-            for(int k=i; k<=j-1; k++){
+            for (int k = i; k <= j - 1; k++)
+            {
                 long long tempAns = Recursive(arr, i, k) +
-                                    Recursive(arr,k+1, j)+
-                                    arr[i-1]*arr[k]*arr[j];
+                                    Recursive(arr, k + 1, j) +
+                                    arr[i - 1] * arr[k] * arr[j];
 
-                if(tempAns<mn){
+                if (tempAns < mn)
+                {
                     mn = tempAns;
-                }                    
+                }
             }
             return mn;
         }
+        int Memoized(int arr[], int i, int j)
+        {
+            if (t[i][j] != -1)
+            {
+                return t[i][j];
+            }
+            int mn = INT_MAX;
+            for (int k = i; k <= j - 1; k++)
+            {
+                long long tempAns = Memoized(arr, i, k) +
+                                    Memoized(arr, k + 1, j) +
+                                    arr[i - 1] * arr[k] * arr[j];
+
+                if (tempAns < mn)
+                {
+                    mn = tempAns; //  mn = std::min(mn, tempAns);
+                }
+            }
+            return t[i][j] = mn;
+        }
+        
+        int evaluateExpr(const std::string &str, int i, int j, bool isTrue)
+        {
+            if (i > j)
+                return 0;
+
+            if (i == j)
+            {
+                if (isTrue)
+                    return str[i] == 'T' ? 1 : 0;
+                else
+                    return str[i] == 'F' ? 1 : 0;
+            }
+
+            int ans = 0;
+
+            for (int k = i + 1; k <= j - 1; k += 2)
+            {
+                char op = str[k];
+
+                int leftT = evaluateExpr(str, i, k - 1, true);
+                int leftF = evaluateExpr(str, i, k - 1, false);
+                int rightT = evaluateExpr(str, k + 1, j, true);
+                int rightF = evaluateExpr(str, k + 1, j, false);
+
+                if (op == '&')
+                {
+                    if (isTrue)
+                        ans += leftT * rightT;
+                    else
+                        ans += leftF * rightT + leftT * rightF + leftF * rightF;
+                }
+                else if (op == '|')
+                {
+                    if (isTrue)
+                        ans += leftT * rightT + leftT * rightF + leftF * rightT;
+                    else
+                        ans += leftF * rightF;
+                }
+                else if (op == '^')
+                {
+                    if (isTrue)
+                        ans += leftT * rightF + leftF * rightT;
+                    else
+                        ans += leftT * rightT + leftF * rightF;
+                }
+            }
+
+            return ans;
+        }
+
+    }
+    namespace PalindromePartitioning
+    {
+        bool isPlindrom(const std::string &str, int i, int j)
+        {
+            while (i < j)
+            {
+                if (str[i] != str[j])
+                    return false;
+                ++i;
+                --j;
+            }
+            return true;
+        }
+
+        int recursive(const std::string &str, int i, int j)
+        {
+            if (i >= j)
+                return 0;
+
+            if (isPlindrom(str, i, j))
+                return 0;
+
+            int min = INT_MAX;
+            for (int k = i; k < j; k++)
+            {
+                int tempAns = recursive(str, i, k) + 1 +
+                              recursive(str, k + 1, j);
+                if (tempAns < min)
+                    min = tempAns;
+            }
+            return min;
+        }
+        int memoized(const std::string &str, int i, int j)
+        {
+            if (i >= j)
+                return 0;
+
+            if (isPlindrom(str, i, j))
+                return 0;
+
+            int min = INT_MAX;
+            for (int k = i; k < j; k++)
+            {
+                // int tempAns = recursive(str, i, k) + 1 + recursive(str, k + 1, j);
+                long left = 0, right = 0;
+
+                if (t[i][k] != -1)
+                {
+                    left = t[i][k];
+                }
+                else
+                {
+                    left = memoized(str, i, k);
+                    t[i][k] = left;
+                }
+
+                if (t[k + 1][j] != -1)
+                {
+                    right = t[k + 1][j];
+                }
+                else
+                {
+                    right = memoized(str, k + 1, j);
+                    t[k + 1][j] = right;
+                }
+
+                long long tempAns = left + 1 + right;
+
+                if (tempAns < min)
+                    min = tempAns;
+            }
+            return min;
+        }
+
     }
 
 }
